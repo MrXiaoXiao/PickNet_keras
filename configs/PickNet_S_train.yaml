@@ -1,0 +1,43 @@
+Training:
+  TASK_ID: 'PickNet_S_'
+  gpu_id: '0'
+  batchsize: 16
+  lr: 0.0003
+  # opt: 'adam'
+  opt: 'adam'
+  # loss: 'BCE','CB_BCE', or 'Focal_CB_BCE'
+  loss: 'Focal_CB_BCE'
+  batch_size: 16
+  STEAD_batch_size: 6
+  INSTANCE_batch_size: 6 
+  Noise_batch_size: 3
+  Empty_batch_size: 1
+  shift_max: 500
+  epochs: 100
+  steps_per_epoch: 2000
+  validation_steps: 1000
+  num_works: 16
+  max_queue: 16
+  filepath: './trained_models/'
+  histpath: './trained_models/'
+
+  STEAD_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/waveforms.hdf5'
+  INSTANCE_ev_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/Instance_events_counts.hdf5'
+
+  STEAD_ev_csv_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_eq.csv.train.csv'
+  STEAD_noise_csv_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_no.csv'
+  INSTANCE_ev_csv_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/metadata_Instance_events_both_p_s.csv.train.csv'
+
+  STEAD_ev_csv_path_val: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_eq.csv.val.csv'
+  INSTANCE_ev_csv_path_val: '/mnt/GPT_disk/DL_datasets/INSTANCE/metadata_Instance_events_both_p_s.csv.val.csv'
+
+PickNet:
+  wave_type: 'S'
+  duplicate_num: 14
+  length: 1600
+  channel_num: 2
+  b1_convw: 32
+  b2_convw: 16
+  b3_convw: 8
+  b4_convw: 4
+  b5_convw: 2
