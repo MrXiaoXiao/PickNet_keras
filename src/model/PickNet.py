@@ -23,7 +23,7 @@ def RU_layer(x, x_res, upscale_out, upscale_res):
 
 def PickNet_keras(cfgs=None):
     """
-    Stacked Unet
+    PickNet keras
     """
     input_data = layers.Input(shape=(cfgs['PickNet']['length'],cfgs['PickNet']['channel_num']),name='input')
 
