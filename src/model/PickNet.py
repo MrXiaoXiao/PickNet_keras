@@ -22,9 +22,7 @@ def RU_layer(x, x_res, upscale_out, upscale_res):
     return res_outputs, side_outputs
 
 def PickNet_keras(cfgs=None):
-    """
-    PickNet keras
-    """
+
     input_data = layers.Input(shape=(cfgs['PickNet']['length'],cfgs['PickNet']['channel_num']),name='input')
 
     # block 1
@@ -74,7 +72,7 @@ def PickNet_keras(cfgs=None):
     side_5_3 = build_side_layer(conv5_3)
 
     # Deep-to-shallow-fashion RSRN
-    dsnout_5_3 = Conv1DTranspose(side_5_3,1,16*2,16,padding='same')
+    dsnout_5_3 = Conv1DTranspose(side_5_3,1,16*2,16,padding='same',activation='sigmoid')
     residual_5_2, dsnout_5_2  = RU_layer(side_5_2, side_5_3, 16, 1)
     residual_5_1, dsnout_5_1  = RU_layer(side_5_1, residual_5_2, 16, 1)
 
@@ -106,7 +104,7 @@ def PickNet_keras(cfgs=None):
     model = Model(inputs=input_data,outputs=all_outputs)    
 
     if cfgs['Training']['opt'] == 'adam':
-        opt = optimizers.Adam(cfgs['Training']['lr'])
+        opt = optimizers.Adam(cfgs['Training']['lr'],clipvalue=5.0)
     else:
         pass
 

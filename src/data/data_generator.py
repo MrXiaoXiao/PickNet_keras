@@ -3,13 +3,13 @@ import keras
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-
+from random import shuffle
 from src.data.data_load_lib import get_from_STEAD, get_from_INSTANCE
 from src.data.data_load_lib import get_instance_for_training
 
 class SimpleTrainGenerator(tf.keras.utils.Sequence):
     """
-    generator data for DiTing Zoo Traning
+    generator data for PickNet Keras Traning
     """
     def __init__(self, 
                 init_dict=None,
@@ -138,4 +138,88 @@ class SimpleTrainGenerator(tf.keras.utils.Sequence):
         """
         epoch end
         """
+        return
+
+class SimpleTrainGeneratorINSTANCE(tf.keras.utils.Sequence):
+    """
+    generator data for PickNet Keras Traning on INSTANCE
+    """
+    def __init__(self, 
+                init_dict=None,
+                batch_size=64, 
+                dim=1200,
+                dim_y=1200,
+                n_channels=1,
+                n_classes=1, 
+                miniepoch=2000,
+                duplicate_num=14,
+                wave_type = 'P',
+                shift_max = 300):
+        """
+        Init
+        """        
+        # load INSTANCE Params
+        self.INSTANCE_ev_hdf5_path = init_dict['INSTANCE_ev_hdf5_path']
+        self.INSTANCE_ev_csv_path = init_dict['INSTANCE_ev_csv_path']
+        self.INSTANCE_ev_csv = pd.read_csv(self.INSTANCE_ev_csv_path)
+        self.INSTANCE_batch_size = init_dict['INSTANCE_batch_size']
+        self.INSTANCE_ev_indexs = np.arange(len(self.INSTANCE_ev_csv),dtype=np.int)
+
+        self.dim = dim
+        self.dim_y = dim_y
+        self.batch_size = batch_size
+        self.n_channels = n_channels
+        self.n_classes = n_classes
+        self.miniepoch = miniepoch
+        self.duplicate_num = duplicate_num
+        self.wave_type = wave_type
+        self.on_epoch_end()
+        self.shift_max = shift_max
+
+    def __len__(self):
+        """
+        number of batches per epoch
+        """
+        return int(len(self.INSTANCE_ev_csv)/self.batch_size)
+
+    def __getitem__(self, index):
+        """
+        create batch for input
+        """
+        X = np.zeros((self.batch_size, self.dim, self.n_channels))
+        y = np.zeros((self.batch_size, self.dim, self.n_classes))
+        start_dx = 0
+        # get from INSTANCE dataset
+        total_choice_ids = self.INSTANCE_ev_indexs[index*self.INSTANCE_batch_size:(index+1)*self.INSTANCE_batch_size]
+        for batch_dx in range(start_dx, start_dx + self.INSTANCE_batch_size):
+            choice_id = total_choice_ids[int(batch_dx-start_dx)]
+            choice_line = self.INSTANCE_ev_csv.iloc[choice_id]
+            key = choice_line['trace_name']
+            p_t = choice_line['trace_P_arrival_sample']
+            s_t = choice_line['trace_S_arrival_sample']
+            
+            temp_data_X, temp_data_Y = get_instance_for_training(dataset='INSTANCE',
+                                                                dataset_path=self.INSTANCE_ev_hdf5_path,
+                                                                data_length = self.dim,
+                                                                data_channel_num = self.n_channels,
+                                                                key = key,
+                                                                wave_type = self.wave_type,
+                                                                shift_max = self.shift_max,
+                                                                p_t = p_t,
+                                                                s_t = s_t)
+            X[batch_dx,:,:] = temp_data_X[:,:]
+            y[batch_dx,:,:] = temp_data_Y[:,:]
+
+        start_dx += self.INSTANCE_batch_size
+                
+        Y = list()
+        for _ in range(self.duplicate_num):
+            Y.append(y[:,:,0:1])
+        return (X, Y)
+    
+    def on_epoch_end(self):
+        """
+        epoch end
+        """
+        shuffle(self.INSTANCE_ev_indexs)
         return
