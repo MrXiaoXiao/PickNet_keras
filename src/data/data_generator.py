@@ -162,6 +162,9 @@ class SimpleTrainGeneratorINSTANCE(tf.keras.utils.Sequence):
         self.INSTANCE_ev_hdf5_path = init_dict['INSTANCE_ev_hdf5_path']
         self.INSTANCE_ev_csv_path = init_dict['INSTANCE_ev_csv_path']
         self.INSTANCE_ev_csv = pd.read_csv(self.INSTANCE_ev_csv_path)
+        self.INSTANCE_ev_csv = self.INSTANCE_ev_csv.dropna(subset=['trace_S_arrival_sample'])
+
+
         self.INSTANCE_batch_size = init_dict['INSTANCE_batch_size']
         self.INSTANCE_ev_indexs = np.arange(len(self.INSTANCE_ev_csv),dtype=np.int)
 
