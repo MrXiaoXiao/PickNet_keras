@@ -71,15 +71,21 @@ def get_instance_for_training(dataset='STEAD',
     if start_dx < 0:
         temp_start = (-1)*start_dx
         start_dx = 0
-        pass
+
     elif end_dx > len(data):
         temp_end = (end_dx - len(data))
         end_dx = len(data)
     else:
         pass
-    
+
+    # check if start_dx or end_dx or temp_start or temp_end is incorrect
+    temp_start = int(temp_start)
+    temp_end = int(temp_end)
     start_dx = int(start_dx)
     end_dx = int(end_dx)
+    
+    if temp_start < 0 or temp_end > len(temp_data_X) or start_dx < 0 or end_dx > len(data):
+        return np.zeros([data_length,data_channel_num]), np.zeros([data_length,1]) 
 
     if wave_type == 'P':
         temp_data_X[temp_start:temp_end,:] = data[start_dx:end_dx,2:3]
