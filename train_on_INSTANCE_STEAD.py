@@ -1,4 +1,3 @@
-from genericpath import exists
 from src.data.data_generator import SimpleTrainGenerator
 from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau
 import os

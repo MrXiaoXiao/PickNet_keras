@@ -1,4 +1,3 @@
-from genericpath import exists
 from src.data.data_generator import SimpleTrainGeneratorINSTANCE
 from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau
 import os
@@ -84,7 +83,7 @@ def train_PickNet(cfgs=None):
     return
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Utility of Training and Testing PickNet keras Beta 0.01')
+    parser = argparse.ArgumentParser(description='Utility of Training PickNet keras Beta 0.01')
     parser.add_argument('--config-file', dest='config_file', type=str, help='Path to Configuration file')
 
     args = parser.parse_args()

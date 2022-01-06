@@ -1,20 +1,20 @@
 Training:
   TASK_ID: 'PickNet_S_'
-  gpu_id: '2'
+  gpu_id: '3'
   batchsize: 16
   lr: 0.0003
   # opt: 'adam'
   opt: 'adam'
   # loss: 'BCE','CB_BCE', or 'Focal_CB_BCE'
-  loss: 'Focal_CB_BCE'
+  loss: 'CB_BCE'
   batch_size: 16
   STEAD_batch_size: 0
   INSTANCE_batch_size: 16 
   Noise_batch_size: 0
   Empty_batch_size: 0
   shift_max: 500
-  epochs: 100
-  steps_per_epoch: 2000
+  epochs: 10
+  steps_per_epoch: 10000
   validation_steps: 1000
   num_works: 16
   max_queue: 16
