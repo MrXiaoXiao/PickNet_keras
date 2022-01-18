@@ -1,5 +1,5 @@
 from src.data.data_generator import SimpleTrainGeneratorINSTANCE
-from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau, CSVLogger
 import os
 import yaml
 import argparse
@@ -15,6 +15,10 @@ def train_PickNet(cfgs=None):
     
     model = PickNet_keras(cfgs)
 
+    # if use previous model
+    if cfgs['Training']['use_previous_model_as_start']:
+        model.load_weights(cfgs['Training']['previous_model_path'])
+    
     init_dict = dict()
     # fill dict here
 
@@ -55,18 +59,25 @@ def train_PickNet(cfgs=None):
     else:
         os.makedirs(cfgs['Training']['filepath'])
     
-    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', save_best_only=False,mode='auto', period=1)
+    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', save_best_only=True,mode='auto', period=1)
     
     lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                     cooldown=0,
                                     patience=10,
                                     min_lr = 0.1e-7)
+    
+    # write traning loss log
+    if os.path.exists(cfgs['Training']['train_log_dir']):
+        pass
+    else:
+        os.makedirs(cfgs['Training']['train_log_dir'])
+    csv_logger = CSVLogger(cfgs['Training']['train_log_dir'] + cfgs['Training']['TASK_ID'] + 'train_log.csv')
 
     hist = model.fit(train_data_gen,
                         workers=cfgs['Training']['num_works'],
                         max_queue_size=cfgs['Training']['max_queue'],
                         use_multiprocessing=False,
-                        callbacks=[checkpoint,lr_reducer],
+                        callbacks=[checkpoint,lr_reducer,csv_logger],
                         epochs=cfgs['Training']['epochs'],
                         steps_per_epoch=cfgs['Training']['steps_per_epoch'],
                         validation_data=val_data_gen,

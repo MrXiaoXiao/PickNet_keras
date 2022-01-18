@@ -21,6 +21,10 @@ Training:
   filepath: './trained_models/'
   histpath: './trained_models/'
 
+  train_log_dir: './logs/'
+  use_previous_model_as_start: False
+  previous_model_path: None
+
   STEAD_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/waveforms.hdf5'
   INSTANCE_ev_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/Instance_events_counts.hdf5'
 
