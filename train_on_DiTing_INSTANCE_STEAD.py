@@ -1,5 +1,5 @@
-from src.data.data_generator import SimpleTrainGenerator
-from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau
+from src.data.data_generator import SimpleTrainGenerator_DIS
+from keras.callbacks import ModelCheckpoint,  ReduceLROnPlateau, CSVLogger
 import os
 import yaml
 import argparse
@@ -15,8 +15,16 @@ def train_PickNet(cfgs=None):
     
     model = PickNet_keras(cfgs)
 
+    # if use previous model
+    if cfgs['Training']['use_previous_model_as_start']:
+        model.load_weights(cfgs['Training']['previous_model_path'])
+
     init_dict = dict()
     # fill dict here
+    # load DiTing Params
+    init_dict['DiTing_hdf5_path'] = cfgs['Training']['DiTing_hdf5_path']
+    init_dict['DiTing_csv_path'] = cfgs['Training']['DiTing_csv_path_train']
+
     # load STEAD Params
     init_dict['STEAD_hdf5_path'] = cfgs['Training']['STEAD_hdf5_path_train'] 
     init_dict['STEAD_ev_csv_path'] = cfgs['Training']['STEAD_ev_csv_path_train'] 
@@ -25,12 +33,13 @@ def train_PickNet(cfgs=None):
     init_dict['INSTANCE_ev_hdf5_path'] = cfgs['Training']['INSTANCE_ev_hdf5_path_train']
     init_dict['INSTANCE_ev_csv_path'] = cfgs['Training']['INSTANCE_ev_csv_path_train']
 
+    init_dict['DiTing_batch_size'] = cfgs['Training']['DiTing_batch_size']
     init_dict['STEAD_batch_size'] = cfgs['Training']['STEAD_batch_size']
     init_dict['INSTANCE_batch_size'] = cfgs['Training']['INSTANCE_batch_size']
     init_dict['Noise_batch_size'] = cfgs['Training']['Noise_batch_size']
     init_dict['Empty_batch_size'] = cfgs['Training']['Empty_batch_size']
 
-    train_data_gen = SimpleTrainGenerator(init_dict = init_dict,
+    train_data_gen = SimpleTrainGenerator_DIS(init_dict = init_dict,
                                     miniepoch = cfgs['Training']['epochs'],
                                     batch_size = cfgs['Training']['batch_size'],
                                     duplicate_num = cfgs['PickNet']['duplicate_num'],
@@ -39,10 +48,12 @@ def train_PickNet(cfgs=None):
                                     n_channels= cfgs['PickNet']['channel_num'],
                                     shift_max = cfgs['Training']['shift_max'],
                                     wave_type = cfgs['PickNet']['wave_type'])
-
+    
+    init_dict['DiTing_csv_path'] = cfgs['Training']['DiTing_csv_path_val']
     init_dict['STEAD_ev_csv_path'] = cfgs['Training']['STEAD_ev_csv_path_val'] 
-    init_dict['INSTANCE_ev_csv_path'] = cfgs['Training']['INSTANCE_ev_csv_path_val'] 
-    val_data_gen = SimpleTrainGenerator(init_dict = init_dict,
+    init_dict['INSTANCE_ev_csv_path'] = cfgs['Training']['INSTANCE_ev_csv_path_val']
+    
+    val_data_gen = SimpleTrainGenerator_DIS(init_dict = init_dict,
                                     miniepoch = cfgs['Training']['validation_steps'],
                                     batch_size = cfgs['Training']['batch_size'],
                                     duplicate_num = cfgs['PickNet']['duplicate_num'],
@@ -62,19 +73,25 @@ def train_PickNet(cfgs=None):
     else:
         os.makedirs(cfgs['Training']['filepath'])
     
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', save_best_only=False,mode='auto', period=1)
+    checkpoint = ModelCheckpoint(filepath, monitor='loss', save_best_only=False, mode='auto', period=1)
     print('Done Creating Generator')
 
     lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                     cooldown=0,
                                     patience=10,
                                     min_lr = 0.1e-7)
+    # write traning loss log
+    if os.path.exists(cfgs['Training']['train_log_dir']):
+        pass
+    else:
+        os.makedirs(cfgs['Training']['train_log_dir'])
+    csv_logger = CSVLogger(cfgs['Training']['train_log_dir'] + cfgs['Training']['TASK_ID'] + 'train_log.csv')
 
     hist = model.fit(train_data_gen,
                         workers=cfgs['Training']['num_works'],
                         max_queue_size=cfgs['Training']['max_queue'],
-                        use_multiprocessing=True,
-                        callbacks=[checkpoint,lr_reducer],
+                        use_multiprocessing=False,
+                        callbacks=[checkpoint,lr_reducer,csv_logger],
                         epochs=cfgs['Training']['epochs'],
                         steps_per_epoch=cfgs['Training']['steps_per_epoch'],
                         validation_data=val_data_gen,

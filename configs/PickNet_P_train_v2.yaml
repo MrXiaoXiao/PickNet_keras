@@ -1,11 +1,11 @@
 Training:
-  TASK_ID: 'PickNet_P_CB_BCE_'
-  gpu_id: '2'
+  TASK_ID: 'PickNet_P_Focal_CB_BCE_'
+  gpu_id: '3'
   lr: 0.00003
   # opt: 'adam'
   opt: 'adam'
   # loss: 'BCE','CB_BCE', or 'Focal_CB_BCE'
-  loss: 'CB_BCE'
+  loss: 'Focal_CB_BCE'
   batch_size: 8
   DiTing_batch_size: 3
   STEAD_batch_size: 2
