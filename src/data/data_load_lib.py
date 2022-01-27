@@ -94,17 +94,23 @@ def get_instance_for_training(dataset='STEAD',
     temp_end = int(temp_end)
     start_dx = int(start_dx)
     end_dx = int(end_dx)
+
+    if len(data) == 0 or (temp_end - temp_start) != (end_dx - start_dx):
+        print('Error on part {} key {}'.format(part, key))
+        return np.zeros([data_length,data_channel_num]), np.zeros([data_length,1])
     
     if temp_start < 0 or temp_end > len(temp_data_X) or start_dx < 0 or end_dx > len(data):
         return np.zeros([data_length,data_channel_num]), np.zeros([data_length,1]) 
-
-    if wave_type == 'P':
-        temp_data_X[temp_start:temp_end,:] = data[start_dx:end_dx,2:3]
-    else:
-        temp_data_X[temp_start:temp_end,:] = data[start_dx:end_dx,0:2]
+    try:
+        if wave_type == 'P':
+            temp_data_X[temp_start:temp_end,:] = data[start_dx:end_dx,2:3]
+        else:
+            temp_data_X[temp_start:temp_end,:] = data[start_dx:end_dx,0:2]
+    except:
+        print('Error on part {} key {}'.format(part, key))
+        return np.zeros([data_length,data_channel_num]), np.zeros([data_length,1])
 
     temp_data_Y[int(half_len - shift)] = 1.0
-
     reverse_factor = np.random.choice([-1,1])
     rescale_factor = np.random.uniform(low=0.5,high=1.5)
 

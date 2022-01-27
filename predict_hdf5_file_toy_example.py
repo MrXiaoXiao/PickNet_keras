@@ -8,7 +8,7 @@ import tensorflow as tf
 import h5py
 
 def predict_example_hdf5_file(cfgs):
-
+    dup_num = 14
     csv_data = pd.read_csv(cfgs['Testing']['pred_csv'], dtype = {'key': str})
     csv_output_data = pd.DataFrame(columns=['key', 'pred_idx', 'prob_idx'])
     picker = tf.keras.models.load_model(cfgs['Testing']['model_path'], compile=False)
@@ -35,7 +35,7 @@ def predict_example_hdf5_file(cfgs):
                 input_batch[ins_dx,:,:] -= np.mean(input_batch[ins_dx,:,:])
                 input_batch[ins_dx,:,:] /= np.max(np.abs(input_batch[ins_dx,:,:]))
         res = picker.predict(input_batch)
-
+        pred_sum = np.sum(res,axis=0)/dup_num
         # write to csv
         for ins_dx in range(batch_size):
             line_dx = ins_dx + pred_dx * batch_size
@@ -43,8 +43,8 @@ def predict_example_hdf5_file(cfgs):
                 continue
             else:
                 key = csv_data.iloc[line_dx]['key']
-                pick_idx = np.argmax(res[-1][ins_dx,:,0])
-                prob_idx = res[-1][ins_dx,pick_idx,0]
+                pick_idx = np.argmax(pred_sum[ins_dx,:,0])
+                prob_idx = pred_sum[ins_dx,pick_idx,0]
                 csv_output_data.loc[len(csv_output_data.index)] = [key, pick_idx, prob_idx]
 
         if cfgs['Testing']['if_plot']:
@@ -59,7 +59,7 @@ def predict_example_hdf5_file(cfgs):
             
             for res_dx in range(14):
                 plt.plot(res[res_dx][check_id,:,0]-res_dx*1.0 - 2.0,color='b')
-            plt.plot([np.argmax(res[-1][check_id,:,0]),np.argmax(res[-1][check_id,:,0])], [-1,1],color='b',linewidth=3,linestyle='--')
+            plt.plot([np.argmax(pred_sum[check_id,:,0]),np.argmax(pred_sum[check_id,:,0])], [-1,1],color='b',linewidth=3,linestyle='--')
             plt.savefig(cfgs['Testing']['imgs_save_path']+'Batch_{}_check_id_{}.png'.format(pred_dx,check_id),dpi=300)
             plt.close()
     csv_output_data.to_csv(cfgs['Testing']['output_csv'])

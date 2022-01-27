@@ -22,8 +22,8 @@ Training:
   histpath: './trained_models/'
 
   train_log_dir: './logs/'
-  use_previous_model_as_start: False
-  previous_model_path: './trained_models/PickNet_P__0100.hdf5'
+  use_previous_model_as_start: True
+  previous_model_path: './trained_models/PickNet_P_CB_BCE__0028.hdf5'
 
   DiTing_hdf5_path: '/mnt/GPT_disk/DL_datasets/DiTing330km_publish/'
 

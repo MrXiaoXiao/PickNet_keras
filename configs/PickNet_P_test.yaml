@@ -1,9 +1,9 @@
 Testing:
-  gpu_id: '3'
+  gpu_id: '1'
   batchsize: 16
   pred_hdf5: './notebooks/toy_example.hdf5'
   pred_csv:  './notebooks/toy_example.csv'
-  model_path: './trained_models/PickNet_P__0005.hdf5'
+  model_path: './trained_models/PickNet_P_20220127.hdf5'
   output_csv: './notebooks/toy_example_prediction.csv'
   if_plot: True
   imgs_save_path: './plot_imgs/'

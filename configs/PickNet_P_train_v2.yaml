@@ -22,11 +22,10 @@ Training:
   histpath: './trained_models/'
 
   train_log_dir: './logs/'
-  use_previous_model_as_start: False
-  previous_model_path: './trained_models/PickNet_P__0100.hdf5'
+  use_previous_model_as_start: True
+  previous_model_path: './trained_models/PickNet_P_Focal_CB_BCE__0007.hdf5'
 
   DiTing_hdf5_path: '/mnt/GPT_disk/DL_datasets/DiTing330km_publish/'
-
   STEAD_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/waveforms.hdf5'
   INSTANCE_ev_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/Instance_events_counts.hdf5'
 

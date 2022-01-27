@@ -1,37 +1,40 @@
 Training:
-  TASK_ID: 'PickNet_S_'
-  gpu_id: '3'
-  batchsize: 16
-  lr: 0.0003
+  TASK_ID: 'PickNet_S_Focal_CB_BCE_'
+  gpu_id: '0'
+  lr: 0.00003
   # opt: 'adam'
   opt: 'adam'
   # loss: 'BCE','CB_BCE', or 'Focal_CB_BCE'
-  loss: 'CB_BCE'
-  batch_size: 16
-  STEAD_batch_size: 0
-  INSTANCE_batch_size: 16 
-  Noise_batch_size: 0
+  loss: 'Focal_CB_BCE'
+  batch_size: 8
+  DiTing_batch_size: 3
+  STEAD_batch_size: 2
+  INSTANCE_batch_size: 2
+  Noise_batch_size: 1
   Empty_batch_size: 0
   shift_max: 500
-  epochs: 10
-  steps_per_epoch: 10000
-  validation_steps: 1000
-  num_works: 16
-  max_queue: 16
+  epochs: 100
+  steps_per_epoch: 5000
+  validation_steps: 100
+  num_works: 24
+  max_queue: 10
   filepath: './trained_models/'
   histpath: './trained_models/'
 
   train_log_dir: './logs/'
-  use_previous_model_as_start: False
-  previous_model_path: None
-
+  use_previous_model_as_start: True
+  previous_model_path: '/mnt/GPT_disk/zhaoming/xzw/misc/PickNet_keras/trained_models/PickNet_S_Focal_CB_BCE__0014.hdf5'
+  
+  DiTing_hdf5_path: '/mnt/GPT_disk/DL_datasets/DiTing330km_publish/'
   STEAD_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/waveforms.hdf5'
   INSTANCE_ev_hdf5_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/Instance_events_counts.hdf5'
-
+  
+  DiTing_csv_path_train: '/mnt/GPT_disk/DL_datasets/DiTing330km_publish/merge.csv.train.csv'
   STEAD_ev_csv_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_eq.csv.train.csv'
   STEAD_noise_csv_path_train: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_no.csv'
   INSTANCE_ev_csv_path_train: '/mnt/GPT_disk/DL_datasets/INSTANCE/metadata_Instance_events_both_p_s.csv.train.csv'
 
+  DiTing_csv_path_val: '/mnt/GPT_disk/DL_datasets/DiTing330km_publish/merge.csv.val.csv'
   STEAD_ev_csv_path_val: '/mnt/GPT_disk/DL_datasets/STEAD/metadata_eq.csv.val.csv'
   INSTANCE_ev_csv_path_val: '/mnt/GPT_disk/DL_datasets/INSTANCE/metadata_Instance_events_both_p_s.csv.val.csv'
 

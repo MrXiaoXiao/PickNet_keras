@@ -18,6 +18,7 @@ def train_PickNet(cfgs=None):
     # if use previous model
     if cfgs['Training']['use_previous_model_as_start']:
         model.load_weights(cfgs['Training']['previous_model_path'])
+        print('Done loading weights from {}'.format(cfgs['Training']['previous_model_path']))
 
     init_dict = dict()
     # fill dict here
