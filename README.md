@@ -1,5 +1,5 @@
 # PickNet_keras
-Keras and TF2.0 implemetation of PickNet and examples for training on STEAD and INSTANCE datasets
+Keras and TF2.0 implemetation of PickNet and examples for training on DiTing, STEAD, and INSTANCE datasets.
 
 Undergoning rapid development!
 
