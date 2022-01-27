@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.hdf5 filter=lfs diff=lfs merge=lfs -text
+trained_models/*.hdf5 filter=lfs diff=lfs merge=lfs -text
+trained_models/PickNet_P_20220127.hdf5 filter=lfs diff=lfs merge=lfs -text
+trained_models/PickNet_S_20220127.hdf5 filter=lfs diff=lfs merge=lfs -text
