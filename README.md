@@ -1,8 +1,6 @@
 # PickNet_keras
 Keras and TF2.0 implemetation of PickNet and examples for training on DiTing, STEAD, and INSTANCE datasets.
 
-Undergoning rapid development!
-
 Python=3.8.11
 Tensorflow=2.2.0
 Keras=2.4.3
